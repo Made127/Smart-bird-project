@@ -1,0 +1,6 @@
+.deps/
+App/node_modules/
+App/android/.gradle/
+App/android/build/
+App/android/app/build/
+*.log

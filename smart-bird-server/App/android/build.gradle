@@ -1,0 +1,57 @@
+// Android 顶层 Gradle 配置：集中声明所有子模块共用的仓库和插件版本。
+
+buildscript {
+    
+    repositories {
+        // 使用阿里云 Maven 镜像，提高国内网络下依赖下载成功率。
+        maven {
+            url 'http://maven.aliyun.com/repository/google'
+            // 这行很重要：这些镜像是 http 地址，Gradle 7+ 默认会拒绝非 HTTPS。
+            allowInsecureProtocol = true
+        }
+        maven {
+            url 'http://maven.aliyun.com/repository/central'
+            allowInsecureProtocol = true
+        }
+        maven {
+            url 'http://maven.aliyun.com/repository/gradle-plugin'
+            allowInsecureProtocol = true
+        }
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.2.1'
+        classpath 'com.google.gms:google-services:4.3.13'
+
+        // 这里放 Gradle 插件依赖；App 运行时依赖要放到具体模块的 build.gradle。
+    }
+}
+
+// 引入 Capacitor 生成的版本变量。
+apply from: "variables.gradle"
+
+allprojects {
+    repositories {
+        // 所有模块统一使用同一组仓库，避免子模块依赖解析不一致。
+        maven {
+            url 'http://maven.aliyun.com/repository/google'
+            allowInsecureProtocol = true
+        }
+        maven {
+            url 'http://maven.aliyun.com/repository/central'
+            allowInsecureProtocol = true
+        }
+        maven {
+            url 'http://maven.aliyun.com/repository/public'
+            allowInsecureProtocol = true
+        }
+        google()
+        mavenCentral()
+    }
+}
+
+// 清理整个 Android 工程的构建目录。
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

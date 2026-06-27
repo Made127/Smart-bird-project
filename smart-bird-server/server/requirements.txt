@@ -1,0 +1,10 @@
+flask>=3.0.0
+requests>=2.31.0
+python-dotenv>=1.0.0
+
+# 本地中文语音识别依赖；ASR_PROVIDER=funasr 时必须安装。
+funasr>=1.2.0
+modelscope>=1.17.0
+torch
+torchaudio
+transformers

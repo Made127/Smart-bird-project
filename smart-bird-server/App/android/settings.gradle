@@ -1,0 +1,8 @@
+// Android 工程模块注册：主 App 模块。
+include ':app'
+// Capacitor/Cordova 插件兼容模块。
+include ':capacitor-cordova-android-plugins'
+project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins/')
+
+// 引入 Capacitor 自动生成的模块配置。
+apply from: 'capacitor.settings.gradle'

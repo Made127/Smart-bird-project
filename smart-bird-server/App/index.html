@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <!-- 这行很重要：移动端禁用页面缩放并适配安全区域，保证 App 布局稳定。 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#17231d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="BirdLink">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>BirdLink 采集与变送器 App</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon.svg">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <!-- 左侧导航：所有按钮通过 data-section 和 app.js 的 sections 映射切换页面。 -->
+    <aside class="sidebar" aria-label="主导航">
+      <div class="brand">
+        <div class="brand-mark">BL</div>
+        <div>
+          <h1>BirdLink</h1>
+          <p>信息采集与变送器</p>
+        </div>
+      </div>
+
+      <nav class="nav-list">
+        <button class="nav-item is-active" data-section="dashboard" type="button">总览</button>
+        <button class="nav-item" data-section="network" type="button">配网</button>
+        <button class="nav-item" data-section="sensors" type="button">传感器</button>
+        <button class="nav-item" data-section="voice" type="button">语音</button>
+        <button class="nav-item" data-section="control" type="button">控制</button>
+        <button class="nav-item" data-section="alerts" type="button">告警</button>
+        <button class="nav-item" data-section="device" type="button">设备</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span class="signal-dot online"></span>
+        <div>
+          <strong id="sideOnline">设备在线</strong>
+          <span id="sideLastSync">刚刚同步</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- 顶部栏：显示当前页面标题和全局采集操作。 -->
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">产品 ID <span id="productId">BIRD-PLANT-001</span></p>
+          <h2 id="pageTitle">设备总览</h2>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" id="refreshBtn" type="button" title="立即采集" aria-label="立即采集">
+            <span>↻</span>
+          </button>
+          <button class="primary-btn" id="sendAllBtn" type="button">同步到服务器</button>
+        </div>
+      </header>
+
+      <!-- 总览页：汇总设备状态、快捷采集、核心指标和趋势图。 -->
+      <section class="section is-active" id="dashboard" aria-labelledby="dashboardTitle">
+        <div class="dashboard-grid">
+          <article class="device-panel">
+            <div class="device-hero">
+              <div class="bird-device" aria-hidden="true">
+                <img class="bird-mascot" src="./assets/bird-mascot.png" alt="">
+                <div class="bird-light" id="birdLight"></div>
+                <div class="probe-line"></div>
+                <div class="probe"></div>
+              </div>
+              <div class="device-copy">
+                <h3 id="dashboardTitle">智能小鸟采集器</h3>
+                <p id="deviceSummary">WiFi 已连接，土壤传感器在线，下一次自动采集将在 01:42 后执行。</p>
+              </div>
+            </div>
+            <div class="status-strip">
+              <div>
+                <span>WiFi</span>
+                <strong id="wifiStatus">已连接</strong>
+              </div>
+              <div>
+                <span>电量</span>
+                <strong id="batteryText">76%</strong>
+              </div>
+              <div>
+                <span>模式</span>
+                <strong id="modeText">正常</strong>
+              </div>
+              <div>
+                <span>传感器</span>
+                <strong id="probeText">已连接</strong>
+              </div>
+            </div>
+          </article>
+
+          <article class="quick-panel">
+            <div class="panel-title">
+              <h3>快捷控制</h3>
+              <span id="commandStatus">待命</span>
+            </div>
+            <div class="quick-actions">
+              <button class="action-btn" data-command="collect" type="button">
+                <span>↻</span>
+                <strong>立即采集</strong>
+              </button>
+              <button class="action-btn" data-command="sleep" type="button">
+                <span>◐</span>
+                <strong>休眠</strong>
+              </button>
+              <button class="action-btn" data-command="dnd" type="button">
+                <span>⊘</span>
+                <strong>勿扰</strong>
+              </button>
+              <button class="action-btn" data-command="mute" type="button">
+                <span>◎</span>
+                <strong>静音</strong>
+              </button>
+            </div>
+          </article>
+        </div>
+
+        <div class="metric-grid" id="metricGrid"></div>
+
+        <div class="content-grid two">
+          <article class="panel">
+            <div class="panel-title">
+              <h3>土壤趋势</h3>
+              <select id="trendSelect" aria-label="趋势指标">
+                <option value="moisture">湿度</option>
+                <option value="temp">温度</option>
+                <option value="ph">pH</option>
+                <option value="light" selected>光照</option>
+              </select>
+            </div>
+            <!-- 这行很重要：趋势图由 app.js 直接绘制到 canvas，宽高不要随意删掉。 -->
+            <canvas id="trendCanvas" width="760" height="260" aria-label="趋势图"></canvas>
+          </article>
+
+          <article class="panel">
+            <div class="panel-title">
+              <h3>最近事件</h3>
+              <button class="text-btn" id="clearEventsBtn" type="button">清空</button>
+            </div>
+            <ul class="event-list" id="eventList"></ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- 局域网连接页：配置手机访问电脑 Flask 服务的地址。 -->
+      <section class="section" id="network" aria-labelledby="networkTitle">
+        <div class="section-header">
+          <h2 id="networkTitle">局域网连接</h2>
+          <p>手机、电脑服务和 ESP32 需要连接到同一个 WiFi。</p>
+        </div>
+        <div class="content-grid two">
+          <article class="panel">
+            <form id="serverForm" class="form-grid">
+              <label>
+                <span>电脑服务地址</span>
+                <!-- 这行很重要：输入值会保存到 localStorage，格式必须是完整 http://IP:端口。 -->
+                <input id="serverUrlInput" placeholder="http://电脑IP:8010" inputmode="url" autocomplete="off">
+              </label>
+              <label>
+                <span>传输协议</span>
+                <input value="HTTP / 局域网" disabled>
+              </label>
+              <button class="primary-btn wide" type="submit">保存并测试连接</button>
+            </form>
+          </article>
+          <article class="panel">
+            <div class="connection-state" id="connectionState">
+              <span class="large-dot online"></span>
+              <h3>已连接</h3>
+              <p>设备当前连接到 Office-WiFi，信号强度良好。</p>
+            </div>
+            <div class="kv-list">
+              <div><span>服务地址</span><strong id="ipText">--</strong></div>
+              <div><span>请求耗时</span><strong id="connectTime">--</strong></div>
+              <div><span>最近心跳</span><strong id="networkTime">--</strong></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- 传感器页：展示 ESP32 当前上报的真实传感器数据。 -->
+      <section class="section" id="sensors" aria-labelledby="sensorsTitle">
+        <div class="section-header">
+          <h2 id="sensorsTitle">传感器采集</h2>
+          <p>光照和人体感应读取真实硬件；其他传感器等待后续接入。</p>
+        </div>
+        <div class="toolbar">
+          <button class="primary-btn" id="collectBtn" type="button">刷新真实数据</button>
+        </div>
+        <div class="sensor-table-wrap">
+          <table class="sensor-table">
+            <thead>
+              <tr>
+                <th>指标</th>
+                <th>当前值</th>
+                <th>建议范围</th>
+                <th>状态</th>
+                <th>说明</th>
+              </tr>
+            </thead>
+            <tbody id="sensorTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 语音页：手机录音上传给电脑服务，回复进入 ESP32 播放队列。 -->
+      <section class="section" id="voice" aria-labelledby="voiceTitle">
+        <div class="section-header">
+          <h2 id="voiceTitle">语音与对话</h2>
+          <p>按住按钮对手机说话，松开后发送，回复由 ESP32 扬声器播放。</p>
+        </div>
+        <div class="content-grid two">
+          <article class="panel">
+            <div class="panel-title">
+              <h3>手机语音输入</h3>
+              <span id="voiceState">等待说话</span>
+            </div>
+            <!-- 这行很重要：按住说话按钮依赖 pointerdown/pointerup，不能改成普通 submit 按钮。 -->
+            <button class="talk-button" id="talkButton" type="button" aria-label="按住说话">
+              <span class="talk-icon">●</span>
+              <strong>按住说话</strong>
+              <small>松开发送</small>
+            </button>
+          </article>
+          <article class="panel">
+            <div class="panel-title">
+              <h3>对话记录</h3>
+              <span>真实语音链路</span>
+            </div>
+            <ul class="voice-list" id="voiceList"></ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- 控制页：保留未来固件控制入口，当前未实现的按钮会在 app.js 中禁用。 -->
+      <section class="section" id="control" aria-labelledby="controlTitle">
+        <div class="section-header">
+          <h2 id="controlTitle">设备控制</h2>
+          <p>以下控制接口尚未接入当前固件。</p>
+        </div>
+        <div class="control-grid">
+          <article class="panel">
+            <div class="switch-row">
+              <div>
+                <h3>休眠状态</h3>
+                <p>小鸟不主动说话，麦克风保持开启，可被动答话。</p>
+              </div>
+              <label class="switch">
+                <!-- 这行很重要：当前固件未实现休眠远程控制，页面初始化时会禁用该开关。 -->
+                <input id="sleepToggle" type="checkbox">
+                <span></span>
+              </label>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="switch-row">
+              <div>
+                <h3>勿扰模式</h3>
+                <p>WiFi 暂停传输数据，支持 App 下发定时。</p>
+              </div>
+              <label class="switch">
+                <input id="dndToggle" type="checkbox">
+                <span></span>
+              </label>
+            </div>
+            <div class="time-grid">
+              <label><span>开始</span><input id="dndStart" type="time" value="22:00"></label>
+              <label><span>结束</span><input id="dndEnd" type="time" value="08:00"></label>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-title">
+              <h3>状态灯</h3>
+              <span id="lightText">蓝色长亮</span>
+            </div>
+            <div class="light-options">
+              <button class="light-chip blue is-selected" data-light="connected" type="button">连接成功</button>
+              <button class="light-chip pulse" data-light="pairing" type="button">初始化</button>
+              <button class="light-chip amber" data-light="charging" type="button">充电中</button>
+              <button class="light-chip warning" data-light="low" type="button">低电量</button>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-title">
+              <h3>硬件动作</h3>
+              <span>指令队列</span>
+            </div>
+            <div class="button-stack">
+              <button class="secondary-btn" id="probeToggleBtn" type="button">断开土壤探针</button>
+              <button class="secondary-btn" id="rebootBtn" type="button">重启设备</button>
+              <button class="danger-btn" id="factoryBtn" type="button">恢复默认配置</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- 告警页：显示设备离线、低电量、人体感应等真实事件。 -->
+      <section class="section" id="alerts" aria-labelledby="alertsTitle">
+        <div class="section-header">
+          <h2 id="alertsTitle">告警与提醒</h2>
+          <p>当前仅显示真实的设备离线状态和人体感应变化。</p>
+        </div>
+        <div class="alert-toolbar">
+          <button class="secondary-btn" id="clearAlertsBtn" type="button">全部处理</button>
+        </div>
+        <div class="alert-list" id="alertList"></div>
+      </section>
+
+      <!-- 设备页：集中展示硬件规格、上传下载内容和合规信息。 -->
+      <section class="section" id="device" aria-labelledby="deviceTitle">
+        <div class="section-header">
+          <h2 id="deviceTitle">设备信息</h2>
+          <p>管理产品 ID、固件版本、硬件配置、服务器上传下载内容和认证事项。</p>
+        </div>
+        <div class="content-grid two">
+          <article class="panel">
+            <div class="kv-list large">
+              <div><span>产品 ID</span><strong>BIRD-PLANT-001</strong></div>
+              <div><span>主控</span><strong>ESP32 系列</strong></div>
+              <div><span>电池</span><strong>2500mAh 聚合物锂电池</strong></div>
+              <div><span>工作电压</span><strong>3.7V / 4.2V</strong></div>
+              <div><span>充电接口</span><strong>Type-C</strong></div>
+              <div><span>防护等级</span><strong>IP65 目标</strong></div>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="kv-list large">
+              <div><span>上传内容</span><strong>产品 ID + 传感器数据 + 语音</strong></div>
+              <div><span>下载内容</span><strong>语音 + 指令</strong></div>
+              <div><span>协议</span><strong>TCP/IP</strong></div>
+              <div><span>固件版本</span><strong id="firmwareText">v0.9.12</strong></div>
+              <div><span>软件内容</span><strong>驱动、WiFi、版本信息</strong></div>
+              <div><span>合规事项</span><strong>ICP、等保、CCC、FCC 等</strong></div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 全局轻提示，由 app.js 的 showToast 控制显示和隐藏。 -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- 这行很重要：页面所有状态刷新、录音和接口请求逻辑都在 app.js 中。 -->
+  <script src="./app.js"></script>
+</body>
+</html>

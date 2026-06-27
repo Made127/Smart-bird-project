@@ -1,0 +1,12 @@
+{
+  "appId": "com.birdlink.collector",
+  "appName": "BirdLink",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

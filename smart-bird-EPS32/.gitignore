@@ -1,0 +1,11 @@
+build/
+managed_components/
+sdkconfig
+sdkconfig.old
+
+server/.venv/
+server/.venv_ai/
+server/work/
+server/__pycache__/
+server/.env
+server/*.log

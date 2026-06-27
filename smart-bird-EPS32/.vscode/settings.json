@@ -1,0 +1,17 @@
+{
+  "C_Cpp.intelliSenseEngine": "default",
+  "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+  "idf.espIdfPathWin": "${env:IDF_PATH}",
+  "idf.espIdfPath": "${env:IDF_PATH}",
+  "idf.toolsPathWin": "${env:IDF_TOOLS_PATH}",
+  "idf.pythonInstallPath": "F:\\software\\Espressif\\tools\\idf-python\\3.11.2\\python.exe",
+  "idf.customExtraVars": {
+    "IDF_TARGET": "esp32s3"
+  },
+  "idf.openOcdConfigs": [
+    "interface/ftdi/esp32_devkitj_v1.cfg",
+    "target/esp32s3.cfg"
+  ],
+  "idf.flashType": "UART",
+  "idf.portWin": "COM4"
+}

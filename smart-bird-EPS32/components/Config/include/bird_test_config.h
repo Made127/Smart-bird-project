@@ -1,0 +1,92 @@
+#ifndef BIRD_TEST_CONFIG_H
+#define BIRD_TEST_CONFIG_H
+
+#include "driver/gpio.h"
+#include "hal/adc_types.h"
+
+// 烧录前需要根据现场网络修改下面连接参数；也可以通过同名环境变量在 CMake 构建时覆盖。
+#ifndef BIRD_WIFI_SSID
+#define BIRD_WIFI_SSID      ""
+#endif
+#ifndef BIRD_WIFI_PASSWORD
+#define BIRD_WIFI_PASSWORD  ""
+#endif
+#ifndef BIRD_SERVER_IP
+#define BIRD_SERVER_IP      ""
+#endif
+#ifndef BIRD_SERVER_PORT
+#define BIRD_SERVER_PORT    8010
+#endif
+
+// 音频识别和播放相关参数。
+#define BIRD_SAMPLE_RATE        16000
+#define BIRD_VAD_THRESHOLD      420
+#define BIRD_SILENCE_FRAMES     25
+#define BIRD_SPEECH_START_FRAMES 3
+#define BIRD_MIN_SPEECH_SAMPLES 6400
+#define BIRD_MAX_RECORD_SAMPLES (BIRD_SAMPLE_RATE * 5)
+#define BIRD_POST_PLAYBACK_MUTE_FRAMES 50
+#define BIRD_REMOTE_POST_PLAYBACK_MUTE_FRAMES 8
+#define BIRD_BARGE_IN_MIN_VOLUME 900
+#define BIRD_BARGE_IN_START_FRAMES 3
+#define BIRD_BARGE_IN_ECHO_CALIBRATION_FRAMES 10
+
+// 喇叭输出音量百分比；教室环境建议使用 20-35。
+#define BIRD_SPEAKER_VOLUME_PERCENT 50
+
+// 传感器数据采集间隔，单位为秒。
+#define BIRD_COLLECT_INTERVAL_SECONDS 7200
+
+// 单节 3.7V 锂电池电量检测配置。
+// 硬件接线：
+//   电池 B+ -> 100K 电阻 -> GPIO3 -> 100K 电阻 -> GND
+//   电池 B- / 电源模块 GND -> ESP32 GND
+// 注意：不要把电池正极或 5V OUT+ 直接接到 ESP32 的 ADC 引脚。
+#define BIRD_BATTERY_ENABLED 1
+#define BIRD_BATTERY_CAPACITY_MAH 2500
+#define BIRD_BATTERY_ADC_UNIT ADC_UNIT_1
+#define BIRD_BATTERY_ADC_CHANNEL ADC_CHANNEL_2
+// 这行很重要：GPIO3 只能接分压后的电压，不能直接接电池正极或 5V。
+#define BIRD_BATTERY_ADC_GPIO GPIO_NUM_3
+// 这两行很重要：上下电阻必须和实际接线一致，否则电池电压会换算错误。
+#define BIRD_BATTERY_DIVIDER_TOP_OHM 100000
+#define BIRD_BATTERY_DIVIDER_BOTTOM_OHM 100000
+#define BIRD_BATTERY_LOW_PERCENT 5
+#define BIRD_BATTERY_MIN_VALID_MV 3000
+#define BIRD_BATTERY_MAX_VALID_MV 4300
+#define BIRD_BATTERY_FULL_MV 4150
+// 可选充电状态检测引脚；如果充电模块只有 OUT/B/GND/IN，则保持 GPIO_NUM_NC。
+#define BIRD_BATTERY_CHG_PIN GPIO_NUM_NC
+#define BIRD_BATTERY_FULL_PIN GPIO_NUM_NC
+#define BIRD_BATTERY_STATUS_ACTIVE_LEVEL 0
+
+// 土壤检测探头使用 Modbus RTU 通信；默认地址 0x02，串口参数 9600 8N1。
+// 这些 UART 引脚需要避开喇叭使用的 GPIO16/GPIO17。
+#define BIRD_SOIL_PROBE_ENABLED 1
+#define BIRD_SOIL_PROBE_UART UART_NUM_1
+// 这两行很重要：ESP32 TX 接探头 RX，ESP32 RX 接探头 TX。
+#define BIRD_SOIL_PROBE_TX_PIN GPIO_NUM_21
+#define BIRD_SOIL_PROBE_RX_PIN GPIO_NUM_18
+#define BIRD_SOIL_PROBE_DE_PIN GPIO_NUM_NC
+#define BIRD_SOIL_PROBE_ADDR 0x02
+#define BIRD_SOIL_PROBE_BAUD 9600
+
+// 四脚 RGB LED 模块：公共脚接 GND，红绿蓝信号脚分别接下面三个 GPIO。
+#define BIRD_RGB_LED_RED_PIN      GPIO_NUM_4
+#define BIRD_RGB_LED_GREEN_PIN    GPIO_NUM_5
+#define BIRD_RGB_LED_BLUE_PIN     GPIO_NUM_8
+// 这行很重要：如果换成共阳 RGB 模块，需要把这里改为 0。
+#define BIRD_RGB_LED_ACTIVE_HIGH  1
+
+// 三脚按键模块：OUT 空闲时为低电平，按下时为高电平。
+#define BIRD_BUTTON_PIN           GPIO_NUM_9
+#define BIRD_BUTTON_AUTO_DETECT   0
+#define BIRD_BUTTON_ACTIVE_LEVEL  1
+#define BIRD_BUTTON_STARTUP_MS    400
+#define BIRD_BUTTON_IDLE_SAMPLE_MS 500
+#define BIRD_BUTTON_ARM_RELEASE_MS 500
+#define BIRD_BUTTON_DEBOUNCE_MS   40
+#define BIRD_BUTTON_MIN_PRESS_MS  80
+#define BIRD_BUTTON_LONG_PRESS_MS 2000
+
+#endif

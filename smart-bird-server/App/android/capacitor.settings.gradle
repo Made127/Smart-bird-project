@@ -1,0 +1,4 @@
+// 这个文件由 Capacitor 自动生成；运行 capacitor update 时可能被覆盖。
+include ':capacitor-android'
+// 这行很重要：原生 Android 工程通过这里找到 node_modules 中的 Capacitor Android 模块。
+project(':capacitor-android').projectDir = new File('../node_modules/@capacitor/android/capacitor')

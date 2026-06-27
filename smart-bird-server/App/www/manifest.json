@@ -1,0 +1,19 @@
+{
+  "name": "BirdLink 信息采集与变送器",
+  "short_name": "BirdLink",
+  "description": "智能小鸟信息采集与变送器 App",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5f7f4",
+  "theme_color": "#17231d",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

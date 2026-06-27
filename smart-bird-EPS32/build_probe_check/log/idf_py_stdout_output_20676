@@ -1,0 +1,15 @@
+[1/9] Performing build step for 'bootloader'
+[1/1] cmd.exe /C "cd /D D:\qianrushi\bird\softtools\product\bird1\bird_test\build_probe_check\bootloader\esp-idf\esptool_py && D:\qianrushi\bird\softtools\Espressif\python_env\idf5.1_py3.11_env\Scripts\python.exe D:/qianrushi/bird/softtools/Lsofttools/Espressif/frameworks/esp-idf-v5.1.2/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 D:/qianrushi/bird/softtools/product/bird1/bird_test/build_probe_check/bootloader/bootloader.bin"
+Bootloader binary size 0x51c0 bytes. 0x2e40 bytes (36%) free.
+[2/7] Building C object esp-idf/SoilProbe/CMakeFiles/__idf_SoilProbe.dir/SoilProbe.c.obj
+[3/7] Linking C static library esp-idf\SoilProbe\libSoilProbe.a
+[4/7] Generating ld/sections.ld
+[5/7] Linking CXX executable bird_test.elf
+[6/7] Generating binary image from built executable
+esptool.py v4.11.0
+Creating esp32s3 image...
+Merged 3 ELF sections
+Successfully created esp32s3 image.
+Generated D:/qianrushi/bird/softtools/product/bird1/bird_test/build_probe_check/bird_test.bin
+[7/7] cmd.exe /C "cd /D D:\qianrushi\bird\softtools\product\bird1\bird_test\build_probe_check\esp-idf\esptool_py && D:\qianrushi\bird\softtools\Espressif\python_env\idf5.1_py3.11_env\Scripts\python.exe D:/qianrushi/bird/softtools/Lsofttools/Espressif/frameworks/esp-idf-v5.1.2/components/partition_table/check_sizes.py --offset 0x8000 partition --type app D:/qianrushi/bird/softtools/product/bird1/bird_test/build_probe_check/partition_table/partition-table.bin D:/qianrushi/bird/softtools/product/bird1/bird_test/build_probe_check/bird_test.bin"
+bird_test.bin binary size 0xe93d0 bytes. Smallest app partition is 0x100000 bytes. 0x16c30 bytes (9%) free.

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#17231d"/>
+  <circle cx="300" cy="192" r="58" fill="#f8fbf8"/>
+  <ellipse cx="228" cy="262" rx="118" ry="82" fill="#f8fbf8"/>
+  <ellipse cx="224" cy="264" rx="46" ry="30" fill="#d6e8db"/>
+  <path d="M352 200l50 24-50 24z" fill="#e1a444"/>
+  <circle cx="318" cy="184" r="13" fill="#2e8fe6"/>
+  <path d="M118 248l-54 13a20 20 0 0 1-24-15l-10-42a20 20 0 0 1 15-24l54-13a20 20 0 0 1 24 15l10 42a20 20 0 0 1-15 24z" fill="#9ebda6"/>
+  <rect x="220" y="338" width="12" height="70" rx="6" fill="#7a6a55"/>
+  <rect x="186" y="400" width="82" height="18" rx="9" fill="#7a6a55"/>
+  <text x="256" y="472" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="800" fill="#d5f0de">BirdLink</text>
+</svg>

@@ -377,7 +377,7 @@ function formatSensorValue(sensor) {
   return `${sensor.value}${sensor.unit}`;
 }
 
-// 格式化电池百分比、电压和充电状态。
+// 格式化电池百分比、实时电压和充电状态，硬件规格在设备信息页固定展示。
 function formatBatteryText() {
   if (typeof state.batteryPercent !== "number") return "未接入";
   const parts = [`${state.batteryPercent}%`];

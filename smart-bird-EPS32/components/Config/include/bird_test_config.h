@@ -39,7 +39,7 @@
 
 // 单节 3.7V 锂电池电量检测配置。
 // 硬件接线：
-//   电池 B+ -> 100K 电阻 -> GPIO3 -> 100K 电阻 -> GND
+//   电池 B+ -> 1K 电阻 -> GPIO3 -> 1K 电阻 -> GND
 //   电池 B- / 电源模块 GND -> ESP32 GND
 // 注意：不要把电池正极或 5V OUT+ 直接接到 ESP32 的 ADC 引脚。
 #define BIRD_BATTERY_ENABLED 1
@@ -48,9 +48,9 @@
 #define BIRD_BATTERY_ADC_CHANNEL ADC_CHANNEL_2
 // 这行很重要：GPIO3 只能接分压后的电压，不能直接接电池正极或 5V。
 #define BIRD_BATTERY_ADC_GPIO GPIO_NUM_3
-// 这两行很重要：上下电阻必须和实际接线一致，否则电池电压会换算错误。
-#define BIRD_BATTERY_DIVIDER_TOP_OHM 100000
-#define BIRD_BATTERY_DIVIDER_BOTTOM_OHM 100000
+// 这两行很重要：现在按两个 1K 电阻的 1:1 分压换算，必须和实际接线一致。
+#define BIRD_BATTERY_DIVIDER_TOP_OHM 1000
+#define BIRD_BATTERY_DIVIDER_BOTTOM_OHM 1000
 #define BIRD_BATTERY_LOW_PERCENT 5
 #define BIRD_BATTERY_MIN_VALID_MV 3000
 #define BIRD_BATTERY_MAX_VALID_MV 4300
